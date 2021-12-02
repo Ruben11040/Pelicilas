@@ -7,23 +7,33 @@
     tools:context=".ConfigurationActivity">
 
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="34dp"
-        android:text="TextView" />
-
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editTextEndPointF"
         android:layout_width="match_parent"
         android:layout_height="68dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="Api" />
+
+    <EditText
+        android:id="@+id/etApiKey"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Endpoint Peliculas" />
+
+    <EditText
+        android:id="@+id/editTextEndPointCredits"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Endpoint Creditos" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btGuardar"
         android:layout_width="141dp"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="Guardar" />
 </LinearLayout>

@@ -13,8 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,8 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    //private Button btnObtener;
-    //private TextView txtPeliculas;
+
     private ArrayList<Pelicula> listaPeliculas = new ArrayList<Pelicula>();
     private ListView listView;
 
@@ -53,10 +52,6 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
 
         new ObtenerPeliculasAsync().execute(endPointPeliculas);
-
-        /*btnObtener.setOnClickListener( e -> {
-            txtPeliculas.append(" - Cargando Películas");
-        });*/
 
     }
 
@@ -78,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.mnuAcerca:
-                //intent = new Intent(getApplicationContext(), AcercaActivity.class);
-                //startActivity(intent);
+                intent = new Intent(getApplicationContext(), AcercaActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.mnuSalir:
@@ -111,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             StringBuilder result = new StringBuilder();
 
+            Log.d("test", "entrando");
             try {
                 URL urlObj = new URL(params[0]);
                 HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
@@ -137,14 +133,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            Log.d("test", "Result from server: " + result);
-
-            JSONObject resp = null;
-            JSONArray peliculas = null;
-
-            ArrayList<String> peliculasList = new ArrayList<String>();
-
             try {
+                JSONObject resp = null;
+                JSONArray peliculas = null;
+                ArrayList<String> peliculasList = new ArrayList<String>();
+
                 resp = new JSONObject(result);
                 peliculas = resp.getJSONArray("results");
 
@@ -163,15 +156,33 @@ public class MainActivity extends AppCompatActivity {
                             pelicula.getDouble("popularity"),
                             pelicula.getString("release_date") ));
                 }
-
+                Thread.sleep(1000);
             } catch (JSONException e) {
                 e.printStackTrace();
+            }catch (InterruptedException i) {
+                i.printStackTrace();
             }
 
             try {
+                progreso.dismiss();
                 AdaptadorPelicula adaptador = new
-                        AdaptadorPelicula(getApplicationContext(), listaPeliculas );
+                        AdaptadorPelicula(getApplicationContext(), listaPeliculas);
                 listView.setAdapter(adaptador);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        Intent intent = new Intent(getApplicationContext(), DetalleActivity.class);
+                        intent.putExtra("id", String.valueOf (listaPeliculas.get(position).getId() ) );
+                        intent.putExtra("titulo", listaPeliculas.get(position).getTitle() );
+                        intent.putExtra("imagen", listaPeliculas.get(position).getPoster_path() );
+                        intent.putExtra("sinopsis", listaPeliculas.get(position).getOverview() );
+
+                        Log.d("test", "Pasando id " + listaPeliculas.get(position).getId() );
+
+                        startActivity(intent);
+                    }
+                });
 
             } catch (Exception e) {
                 Log.d("test", "pelicula: error " + e.getMessage());
@@ -203,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
         public View getView(final int position, View convertView, ViewGroup parent) {
             if (convertView ==  null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.lista_peliculas, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.pelicula, parent, false);
             }
 
             // Titulo
@@ -216,7 +227,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Titulo
             TextView descripcion = (TextView) convertView.findViewById(R.id.tvDescripcion);
-            descripcion.setText(arrayList.get(position).getOverview().substring(0,100) + " ... ");
+            if(arrayList.get(position).getOverview().length()< 100)
+                descripcion.setText(arrayList.get(position).getOverview());
+            else
+                descripcion.setText(arrayList.get(position).getOverview().substring(0,100) + " ... ");
 
             // Imagen.
             ImageView imagen = (ImageView) convertView.findViewById(R.id.list_image);
@@ -225,6 +239,12 @@ public class MainActivity extends AppCompatActivity {
 
             return convertView;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return false;
     }
 
 }

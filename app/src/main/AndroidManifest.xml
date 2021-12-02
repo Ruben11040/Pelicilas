@@ -12,7 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Peliculas">
+        <activity android:name=".AcercaActivity"/>
         <activity android:name=".ConfigurationActivity"/>
+        <activity android:name=".DetalleActivity"/>
+        <activity android:name=".ListaActoresActivity"/>
         <activity android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

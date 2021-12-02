@@ -2,4 +2,6 @@
     <string name="app_name">Peliculas</string>
     <string name="btn">Obtener Películas</string>
     <string name="txt">Películas</string>
+    <item name="etApiKey" type="id" />
+    <item name="btGuardar" type="id" />
 </resources>
